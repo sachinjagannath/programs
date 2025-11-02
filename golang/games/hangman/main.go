@@ -6,7 +6,6 @@ import (
 	"math/rand"
 	"os"
 	"strings"
-	"time"
 )
 
 type Game struct {
@@ -154,7 +153,6 @@ var WordBank = []string{
 }
 
 func GetRandomWord() string {
-	rand.Seed(time.Now().UnixNano())
 	return WordBank[rand.Intn(len(WordBank))]
 }
 
