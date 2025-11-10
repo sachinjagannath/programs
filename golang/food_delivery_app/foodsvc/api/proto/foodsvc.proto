@@ -1,0 +1,67 @@
+syntax = "proto3";
+
+package foodsvc;
+option go_package = "api/proto;proto";
+
+import "google/protobuf/empty.proto";
+
+service FoodService {
+  //returns a combined product summary (product + inventory + price + supplier)
+  rpc GetMenuItemSummary(GetMenuItemRequest) returns (MenuItemSummary){}
+
+  //bulk update availability for menu items, returns operations summary
+  rpc BulkUpdateAvailability(BulkUpdateRequest) returns (BulkUpdateResponse){}
+
+  //create an order
+  rpc CreateOrder(CreateOrderRequest) returns (OrderResponse){}
+
+  //get aggregated pending orders per restaurant
+  rpc GetPendingOrderSummary(google.protobuf.Empty) returns (PendingOrderSummary){}
+}
+
+message GetMenuItemRequest{
+  int64 menu_item_id = 1;
+}
+
+message MenuItemSummary{
+  int64 id = 1;
+  string name = 2;
+  string restaurant = 3;
+  string availability = 4;
+  string price = 5;
+  string supplier_status = 6;
+}
+
+message BulkUpdateRequest{
+  repeated int64 menu_item_ids = 1;
+  bool available = 2;
+  int32 concurrency = 3; // worker pool size
+}
+
+message BulkUpdateResponse{
+  int32 success = 1;
+  int32 failed = 2;
+}
+
+message CreateOrderRequest{
+  int64 menu_item_id = 1;
+  string customer_name = 2;
+}
+
+message OrderResponse{
+  int64 order_id = 1;
+  string status = 2;
+}
+
+message PendingRestaurant{
+  int64 restaurant_id = 1;
+  string restaurant_name = 2;
+  int32 pending_count = 3;
+}
+
+message PendingOrderSummary{
+  repeated PendingRestaurant items = 1;
+}
+
+
+
